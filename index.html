@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CashDirham Pro | اربح من الإنترنت</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+body{
+  background: linear-gradient(135deg,#0f172a,#1e40af);
+  min-height:100vh;
+  font-family: system-ui;
+}
+.glass{
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(12px);
+}
+.hidden{display:none;}
+</style>
+</head>
+
+<body class="flex items-center justify-center p-4">
+
+<div class="glass w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-6">
+
+<!-- HEADER -->
+<div class="text-center space-y-2">
+  <div class="flex justify-center items-center gap-2">
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="#2563eb">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 6V12L16 14" stroke="#fff" stroke-width="2" fill="none"/>
+    </svg>
+    <h1 class="text-2xl font-extrabold text-blue-800">CashDirham Pro</h1>
+  </div>
+
+  <p id="subtitle" class="text-gray-500 text-sm">
+    سجّل الآن واحصل على 10 دراهم هدية
+  </p>
+
+  <!-- Language -->
+  <div class="flex justify-center gap-4 text-sm">
+    <button onclick="setLang('ar')" class="text-blue-600">العربية</button>
+    <button onclick="setLang('fr')" class="text-gray-500">Français</button>
+  </div>
+</div>
+
+<!-- FORM -->
+<div id="form" class="space-y-4">
+  <input id="name" placeholder="الاسم الكامل"
+    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500">
+
+  <input id="email" placeholder="البريد الإلكتروني"
+    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500">
+
+  <input id="phone" placeholder="رقم الهاتف"
+    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500">
+
+  <button onclick="register()"
+    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition">
+    تسجيل
+  </button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden space-y-4">
+
+  <div>
+    <p class="text-sm text-gray-500">مرحباً،</p>
+    <h3 id="userName" class="text-xl font-bold text-blue-800"></h3>
+  </div>
+
+  <div class="bg-gradient-to-l from-blue-600 to-blue-800 text-white p-6 rounded-2xl">
+    <p id="balanceText">الرصيد الحالي</p>
+    <h2 class="text-3xl font-extrabold">10.00 MAD</h2>
+    <span class="inline-block mt-2 bg-white/20 px-3 py-1 rounded text-xs">
+      🎁 مكافأة التسجيل
+    </span>
+  </div>
+
+  <button onclick="logout()" class="w-full text-gray-400 text-sm">
+    تسجيل الخروج
+  </button>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   EMAILJS CONFIG
+========================= */
+// ⚠️ بدّل هاد القيم
+emailjs.init("O0nDR_ACTbpj7MVqH");
+
+/* =========================
+   LANGUAGE
+========================= */
+let lang = localStorage.getItem("lang") || "ar";
+setLang(lang);
+
+function setLang(l){
+  lang = l;
+  localStorage.setItem("lang",l);
+
+  if(l==="fr"){
+    document.documentElement.dir="ltr";
+    subtitle.innerText="Inscrivez-vous et recevez 10 MAD";
+    balanceText.innerText="Solde actuel";
+  }else{
+    document.documentElement.dir="rtl";
+    subtitle.innerText="سجّل الآن واحصل على 10 دراهم هدية";
+    balanceText.innerText="الرصيد الحالي";
+  }
+}
+
+/* =========================
+   LOCAL STORAGE CHECK
+========================= */
+if(localStorage.getItem("user")){
+  showDashboard();
+}
+
+/* =========================
+   REGISTER
+========================= */
+function register(){
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  if(!name || !email){
+    alert(lang==="fr" ? "Veuillez remplir les champs" : "عافاك عمّر الخانات");
+    return;
+  }
+
+  // Save local
+  localStorage.setItem("user",JSON.stringify({name,email,phone}));
+
+  // Send Email
+  emailjs.send(
+    "service_vltrybj",       // ⚠️
+    "template_ioll2hm",      // ⚠️
+    {
+      user_name: name,
+      user_email: email,
+      user_phone: phone,
+      date: new Date().toLocaleString()
+    }
+  );
+
+  showDashboard();
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+function showDashboard(){
+  const user = JSON.parse(localStorage.getItem("user"));
+  document.getElementById("userName").innerText = user.name;
+  document.getElementById("form").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+}
+
+function logout(){
+  localStorage.removeItem("user");
+  location.reload();
+}
+</script>
+
+</body>
+</html>
